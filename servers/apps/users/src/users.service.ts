@@ -26,6 +26,7 @@ export class UsersService {
   // register user service
   async register(registerDto: RegisterDto, response: Response) {
     const { name, email, password, phone_number } = registerDto;
+
     const isEmailExist = await this.prisma.user.findUnique({
       where: {
         email,
@@ -61,6 +62,8 @@ export class UsersService {
 
     const activationCode = activationToken.activationCode;
 
+    const activation_token = activationToken.token;
+
     this.emailService.sendMail({
       email,
       subject: 'Activate your account',
@@ -69,7 +72,7 @@ export class UsersService {
       activationCode,
     });
 
-    return { user, response };
+    return { activation_token, response };
   }
 
   // create activation token
