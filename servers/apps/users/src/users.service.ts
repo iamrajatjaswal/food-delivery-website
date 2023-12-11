@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService, JwtVerifyOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { LoginDto, RegisterDto, ActivationDto } from './dto/user.dto';
-import { PrismaService } from 'prisma/Prisma.Service';
+import { PrismaService } from 'prisma/Prisma.service';
 import { Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import { EmailService } from './email/email.service';
@@ -162,6 +162,15 @@ export class UsersService {
     hashedPassword: string,
   ): Promise<boolean> {
     return await bcrypt.compare(password, hashedPassword);
+  }
+
+  // get logged in user
+  async getLoggedInUser(req: any) {
+    const user = req.user;
+    const refreshToken = req.accessToken;
+    const accessToken = req.accessToken;
+
+    return { user, refreshToken, accessToken };
   }
 
   // get all users service
