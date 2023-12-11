@@ -1,5 +1,6 @@
 import styles from "@/src/utils/style";
 import NavItems from "../NavItems";
+import ProfileDropDown from "../ProfileDropDown";
 
 const Header = () => {
   return (
@@ -7,6 +8,7 @@ const Header = () => {
       <div className="w-[90%] m-auto h-[80px] flex items-center justify-between">
         <h1 className={`${styles}`}>Code Academy</h1>
         <NavItems />
+        <ProfileDropDown />
       </div>
     </header>
   );
