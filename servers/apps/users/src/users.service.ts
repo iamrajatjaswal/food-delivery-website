@@ -35,7 +35,7 @@ export class UsersService {
     });
 
     if (isEmailExist) {
-      throw new BadRequestException('User already exist with this email!');
+      throw new BadRequestException('User already exists with this email!');
     }
 
     const isPhoneNumberExist = await this.prisma.user.findUnique({
@@ -46,7 +46,7 @@ export class UsersService {
 
     if (isPhoneNumberExist) {
       throw new BadRequestException(
-        'User already exist with this phone number!',
+        'User already exists with this phone number!',
       );
     }
 
@@ -171,6 +171,14 @@ export class UsersService {
     const accessToken = req.accessToken;
 
     return { user, refreshToken, accessToken };
+  }
+
+  // log out user
+  async logout(req: any) {
+    req.user = null;
+    req.refreshToken = null;
+    req.accessToken = null;
+    return { message: 'Logged out successfully!' };
   }
 
   // get all users service
