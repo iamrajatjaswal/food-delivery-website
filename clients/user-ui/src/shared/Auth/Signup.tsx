@@ -81,7 +81,7 @@ const Signup = ({
           )}
         </div>
 
-        <div className="w-full mt-5 relative mt-3">
+        <div className="w-full relative mt-3">
           <label htmlFor="email" className={`${styles.label}`}>
             Enter your Email
           </label>
@@ -115,7 +115,7 @@ const Signup = ({
           )}
         </div>
 
-        <div className="w-full mt-5 relative mt-3">
+        <div className="w-full relative mt-3">
           <label htmlFor="password" className={`${styles.label}`}>
             Enter your Password
           </label>
