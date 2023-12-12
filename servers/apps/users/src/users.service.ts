@@ -166,9 +166,16 @@ export class UsersService {
 
   // get logged in user
   async getLoggedInUser(req: any) {
+    // console.log(req, '=====+>req');
+
     const user = req.user;
     const refreshToken = req.accessToken;
     const accessToken = req.accessToken;
+
+    console.log(
+      { user, refreshToken, accessToken },
+      '{ user, refreshToken, accessToken }',
+    );
 
     return { user, refreshToken, accessToken };
   }

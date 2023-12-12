@@ -6,13 +6,31 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
 import AuthScreen from "../screens/AuthScreen";
+import useUser from "../hooks/useUser";
+import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 
 const ProfileDropDown = () => {
   const [singedIn, setSignedIn] = useState(false);
   const [open, setOpen] = useState(false);
+  const { user, loading } = useUser();
+  console.log(user, "========>user");
+
+  useEffect(() => {
+    if (!loading) {
+      setSignedIn(!!user);
+    }
+  }, [loading, user]);
+
+  const logoutHandler = () => {
+    Cookies.remove("access_token");
+    Cookies.remove("refresh_token");
+    toast.success("Logged out successfully!");
+    window.location.reload();
+  };
 
   return (
     <div className="flex items-center gap-4">
@@ -22,7 +40,7 @@ const ProfileDropDown = () => {
             <Avatar
               as="button"
               className="transition-transform"
-              src="https://avatars.githubusercontent.com/u/44950610?v=4"
+              src={user?.avatar?.url}
             />
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
@@ -35,7 +53,7 @@ const ProfileDropDown = () => {
             <DropdownItem key="apply_for_seller_account">
               Apply for seller account
             </DropdownItem>
-            <DropdownItem key="logout" color="danger">
+            <DropdownItem key="logout" color="danger" onClick={logoutHandler}>
               Log Out
             </DropdownItem>
           </DropdownMenu>

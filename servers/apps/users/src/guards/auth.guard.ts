@@ -24,23 +24,26 @@ export class AuthGuard implements CanActivate {
     const accessToken = req.headers.accesstoken as string;
     const refreshToken = req.headers.refreshtoken as string;
 
-    console.log(accessToken, 'accessToken');
-    console.log(refreshToken, 'refreshToken');
+    console.log(req.headers, 'req.headers');
 
     if (!accessToken || !refreshToken) {
       throw new UnauthorizedException('Please login to access this resource!');
     }
 
     if (accessToken) {
-      const decoded = this.jwtService.verify(accessToken, {
-        secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
-      });
+      const decoded = this.jwtService.decode(accessToken);
 
-      if (!decoded) {
-        throw new UnauthorizedException('Invalid access token!');
+      console.log(decoded, '==========>decoded');
+
+      // const expirationTime = decoded?.exp * 1000;
+      const expirationTime = decoded?.exp;
+
+      console.log(expirationTime, 'expirationTime');
+      console.log(Date.now(), 'Date.now()');
+
+      if (expirationTime < Date.now()) {
+        await this.updateAccessToken(req);
       }
-
-      await this.updateAccessToken(req);
     }
 
     return true;
@@ -50,12 +53,14 @@ export class AuthGuard implements CanActivate {
     try {
       const refreshTokenData = req.headers.refreshtoken as string;
 
-      const decoded = this.jwtService.verify(refreshTokenData, {
-        secret: this.config.get<string>('REFRESH_TOKEN_SECRET'),
-      });
+      const decoded = this.jwtService.decode(refreshTokenData);
 
-      if (!decoded) {
-        throw new UnauthorizedException('Invalid refresh token!');
+      const expirationTime = decoded.exp * 1000;
+
+      if (expirationTime < Date.now()) {
+        throw new UnauthorizedException(
+          'Please login to access this resource!',
+        );
       }
 
       const user = await this.prisma.user.findUnique({
@@ -70,7 +75,7 @@ export class AuthGuard implements CanActivate {
         },
         {
           secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
-          expiresIn: '15m',
+          expiresIn: '5m',
         },
       );
 
@@ -88,7 +93,7 @@ export class AuthGuard implements CanActivate {
       req.accessToken = accessToken;
       req.refreshToken = refreshToken;
     } catch (error) {
-      console.log(error);
+      throw new UnauthorizedException(error.message);
     }
   }
 }

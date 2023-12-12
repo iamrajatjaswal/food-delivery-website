@@ -58,6 +58,8 @@ const Login = ({
         Cookies.set("access_token", response.data.login.accessToken);
         Cookies.set("refresh_token", response.data.login.refreshToken);
         setOpen(false);
+        reset();
+        window.location.reload();
       } else {
         toast.error(response.data.login.error.message);
       }
@@ -118,6 +120,7 @@ const Login = ({
         <div className="w-full mt-5">
           <span
             className={`${styles.label} text-[#2190ff] block text-right cursor-pointer`}
+            onClick={() => setActiveState("ForgotPassword")}
           >
             Forgot your password?
           </span>
