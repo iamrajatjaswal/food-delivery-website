@@ -4,7 +4,7 @@ import Signup from "../shared/Auth/Signup";
 import Verification from "../shared/Auth/Verification";
 
 const AuthScreen = ({ setOpen }: { setOpen: (e: boolean) => void }) => {
-  const [activeState, setActiveState] = useState("Signup");
+  const [activeState, setActiveState] = useState("Login");
 
   const handleClose = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target instanceof HTMLDivElement && e.target.id === "screen") {
@@ -19,7 +19,7 @@ const AuthScreen = ({ setOpen }: { setOpen: (e: boolean) => void }) => {
       onClick={handleClose}
     >
       <div className="w-[500px] bg-slate-900 rounded shadow-sm p-3">
-        {activeState === "Login" && <Login setActiveState={setActiveState} />}
+        {activeState === "Login" && <Login setActiveState={setActiveState} setOpen={setOpen} />}
         {activeState === "Signup" && <Signup setActiveState={setActiveState} />}
         {activeState === "Verification" && (
           <Verification setActiveState={setActiveState} />

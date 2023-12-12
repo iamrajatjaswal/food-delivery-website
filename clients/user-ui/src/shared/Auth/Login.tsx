@@ -9,6 +9,10 @@ import {
 } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { useMutation } from "@apollo/client";
+import { LOGIN_USER } from "@/src/graphql/actions/login.action";
+import Cookies from "js-cookie";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -17,7 +21,15 @@ const formSchema = z.object({
 
 type LoginSchema = z.infer<typeof formSchema>;
 
-const Login = ({ setActiveState }: { setActiveState: (e: string) => void }) => {
+const Login = ({
+  setActiveState,
+  setOpen,
+}: {
+  setActiveState: (e: string) => void;
+  setOpen: (e: boolean) => void;
+}) => {
+  const [login, { loading }] = useMutation(LOGIN_USER);
+
   const {
     register,
     handleSubmit,
@@ -29,9 +41,30 @@ const Login = ({ setActiveState }: { setActiveState: (e: string) => void }) => {
 
   const [show, setShow] = useState(false);
 
-  const onSubmit = (data: LoginSchema) => {
-    console.log(data);
-    reset();
+  const onSubmit = async (data: LoginSchema) => {
+    try {
+      const loginData = {
+        email: data.email,
+        password: data.password,
+      };
+
+      const response = await login({
+        variables: loginData,
+      });
+      console.log(response, "======>response");
+
+      if (response.data.login.user) {
+        toast.success("Login successful!");
+        Cookies.set("access_token", response.data.login.accessToken);
+        Cookies.set("refresh_token", response.data.login.refreshToken);
+        setOpen(false);
+      } else {
+        toast.error(response.data.login.error.message);
+      }
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -91,7 +124,7 @@ const Login = ({ setActiveState }: { setActiveState: (e: string) => void }) => {
           <input
             type="submit"
             value="Login"
-            disabled={isSubmitting}
+            disabled={isSubmitting || loading}
             className={`${styles.button} mt-3`}
           />
         </div>
